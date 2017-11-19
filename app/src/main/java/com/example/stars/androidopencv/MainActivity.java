@@ -273,11 +273,11 @@ import static org.opencv.features2d.Features2d.DRAW_RICH_KEYPOINTS;
                     Core.inRange(inputHSV, new Scalar(220, 50, 70),
                             new Scalar(225,  255, 255), mask2);
                     boxColor = RED;
-                    inputHSV = mask1;
+                    Core.bitwise_or ( mask1, mask2, inputHSV );
                     break;
 
                 case 1:
-                    Core.inRange(inputHSV, new Scalar(30, 100, 100),
+                    Core.inRange(inputHSV, new Scalar(30, 70, 100),
                             new Scalar(90,  255, 255), inputHSV);
                     boxColor = GREEN;
                     break;
@@ -310,7 +310,7 @@ import static org.opencv.features2d.Features2d.DRAW_RICH_KEYPOINTS;
                 double[] height = stats.get(i, Imgproc.CC_STAT_HEIGHT);
                 double[] area = stats.get(i, Imgproc.CC_STAT_AREA);
                 //outer rect area = 414720
-                if(area[0] < 100000 )
+                if(area[0] < 200000 && area[0] > 100)
                     Imgproc.rectangle(mRgba, new Point(left[0],top[0]), new Point(left[0]+width[0], top[0]+height[0]), boxColor, 5);
             }
 
