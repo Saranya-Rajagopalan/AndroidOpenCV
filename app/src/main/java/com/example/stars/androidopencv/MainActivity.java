@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity implements OnTouchListener, 
     private static final Scalar BLUE = new Scalar ( 0, 0, 255 );
     TextView touch_coordinates;
     TextView touch_color;
-    Button red_button, green_button, blue_button;
+    Button red_button, green_button, blue_button, pick_button;
     int color = -1;
     private CameraBridgeViewBase mOpenCvCameraView;
     private Mat mRgba;
@@ -77,6 +77,7 @@ public class MainActivity extends AppCompatActivity implements OnTouchListener, 
         red_button = (Button) findViewById ( R.id.red_button );
         green_button = (Button) findViewById ( R.id.green_button );
         blue_button = (Button) findViewById ( R.id.blue_button );
+        pick_button = (Button) findViewById ( R.id.pick_button );
         red_button.setOnClickListener ( new View.OnClickListener () {
             @Override
             public void onClick(View view) {
@@ -96,6 +97,14 @@ public class MainActivity extends AppCompatActivity implements OnTouchListener, 
             public void onClick(View view) {
                 color = 2;
                 Toast.makeText ( getApplicationContext (), "Blue clicked", Toast.LENGTH_SHORT ).show ();
+            }
+        } );
+        pick_button.setOnClickListener ( new View.OnClickListener () {
+            @Override
+            public void onClick(View view) {
+                color = 3;
+                Toast.makeText ( getApplicationContext (), "Alright! Pick a color from the scene!",
+                        Toast.LENGTH_SHORT ).show ();
             }
         } );
         mOpenCvCameraView.setVisibility ( SurfaceView.VISIBLE );
@@ -165,7 +174,7 @@ public class MainActivity extends AppCompatActivity implements OnTouchListener, 
 
         mBlobColorRgba = convertScalarHsv2Rgba ( mBlobColorHsv );
 
-        touch_color.setText ( "Color: %" + String.format ( "%02X", (int) mBlobColorRgba.val[0] )
+        touch_color.setText ( "Color: #" + String.format ( "%02X", (int) mBlobColorRgba.val[0] )
                 + String.format ( "%02X", (int) mBlobColorRgba.val[1] )
                 + String.format ( "%02X", (int) mBlobColorRgba.val[2] ) );
 
@@ -211,10 +220,10 @@ public class MainActivity extends AppCompatActivity implements OnTouchListener, 
         Imgproc.cvtColor ( mRgba, inputHSV, Imgproc.COLOR_RGB2HSV );
         switch (color) {
             case 0:
-                Core.inRange ( inputHSV, new Scalar ( 0, 100, 102 ),
+                Core.inRange ( inputHSV, new Scalar ( 0, 190, 190 ),
                         new Scalar ( 15, 255, 255 ), mask1 );
-                Core.inRange ( inputHSV, new Scalar ( 200, 100, 102 ),
-                        new Scalar ( 255, 255, 255 ), mask2 );
+                Core.inRange ( inputHSV, new Scalar ( 160, 190, 190 ),
+                        new Scalar ( 180, 255, 255 ), mask2 );
                 boxColor = RED;
                 Core.bitwise_or ( mask1, mask2, inputHSV );
                 mask1.release ();
@@ -230,6 +239,14 @@ public class MainActivity extends AppCompatActivity implements OnTouchListener, 
                 Core.inRange ( inputHSV, new Scalar ( 75, 158, 124 ),
                         new Scalar ( 138, 255, 255 ), inputHSV );
                 boxColor = BLUE;
+                break;
+            case 3:
+                int h = (int) mBlobColorHsv.val[0];
+                int s = (int) mBlobColorHsv.val[1];
+                int v = (int) mBlobColorHsv.val[2];
+                Core.inRange ( inputHSV, new Scalar ( h-30, 70, 70 ),
+                        new Scalar ( h+50, 255, 255 ), inputHSV );
+                boxColor = convertScalarHsv2Rgba ( new Scalar ( h,s,v ) );
                 break;
             default:
                 return mRgba;
@@ -256,9 +273,11 @@ public class MainActivity extends AppCompatActivity implements OnTouchListener, 
             double[] height = stats.get ( i, Imgproc.CC_STAT_HEIGHT );
             double[] area = stats.get ( i, Imgproc.CC_STAT_AREA );
             //outer rect area = 414720
-            if (area[0] < 200000 && area[0] > 200)
-                Imgproc.rectangle ( mRgba, new Point ( left[0], top[0] ), new Point ( left[0] + width[0], top[0] + height[0] ), boxColor, 5 );
+            if ((area[0] < 200000) && (300 < area[0]))
+                Imgproc.rectangle ( mRgba, new Point ( left[0], top[0] ),
+                        new Point ( left[0] + width[0], top[0] + height[0] ), boxColor, 5 );
         }
+
         inputHSV.release ();
         labels.release ();
         centroids.release ();

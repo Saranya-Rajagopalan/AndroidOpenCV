@@ -31,7 +31,7 @@
         android:id="@+id/red_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/touch_coordinates"
+        android:layout_below="@id/touch_color"
         android:text="Red"
         android:textColor="#FF0000" />
 
@@ -39,9 +39,7 @@
         android:id="@+id/green_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/red_button"
-        android:layout_alignBottom="@+id/red_button"
-        android:layout_toEndOf="@+id/red_button"
+        android:layout_below="@+id/red_button"
         android:text="Green"
         android:textColor="#00FF00" />
 
@@ -49,11 +47,16 @@
         android:id="@+id/blue_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/green_button"
-        android:layout_alignBottom="@+id/green_button"
-        android:layout_toEndOf="@+id/green_button"
+        android:layout_below="@+id/green_button"
         android:text="Blue"
         android:textColor="#0000FF" />
 
+    <Button
+        android:id="@+id/pick_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/blue_button"
+        android:text="Pick"
+        android:textColor="#000000" />
 
 </RelativeLayout>
