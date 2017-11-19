@@ -311,7 +311,7 @@ import static org.opencv.features2d.Features2d.DRAW_RICH_KEYPOINTS;
                 double[] area = stats.get(i, Imgproc.CC_STAT_AREA);
                 //outer rect area = 414720
                 if(area[0] < 100000 )
-                    Imgproc.rectangle(mRgba, new Point(left[0],top[0]), new Point(left[0]+width[0], top[0]+height[0]), new Scalar(255,0,0), 5);
+                    Imgproc.rectangle(mRgba, new Point(left[0],top[0]), new Point(left[0]+width[0], top[0]+height[0]), boxColor, 5);
             }
 
             return mRgba;
