@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,14 +36,16 @@ public class MainActivity extends AppCompatActivity implements OnTouchListener, 
     private static final Scalar RED = new Scalar ( 255, 0, 0 );
     private static final Scalar GREEN = new Scalar ( 0, 255, 0 );
     private static final Scalar BLUE = new Scalar ( 0, 0, 255 );
-    TextView touch_coordinates;
-    TextView touch_color;
-    Button red_button, green_button, blue_button, pick_button;
+    private TextView touch_coordinates, touch_color;
+    private Button red_button, green_button, blue_button, pick_button;
+    private Switch highlight_button;
     int color = -1;
     private CameraBridgeViewBase mOpenCvCameraView;
     private Mat mRgba;
     private Scalar mBlobColorRgba;
     private Scalar mBlobColorHsv;
+
+    private boolean highlight = false;
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback ( this ) {
         @Override
         public void onManagerConnected(int status) {
@@ -78,6 +81,7 @@ public class MainActivity extends AppCompatActivity implements OnTouchListener, 
         green_button = (Button) findViewById ( R.id.green_button );
         blue_button = (Button) findViewById ( R.id.blue_button );
         pick_button = (Button) findViewById ( R.id.pick_button );
+        highlight_button = (Switch) findViewById ( R.id.highlight_button );
         red_button.setOnClickListener ( new View.OnClickListener () {
             @Override
             public void onClick(View view) {
@@ -105,6 +109,18 @@ public class MainActivity extends AppCompatActivity implements OnTouchListener, 
                 color = 3;
                 Toast.makeText ( getApplicationContext (), "Alright! Pick a color from the scene!",
                         Toast.LENGTH_SHORT ).show ();
+            }
+        } );
+        highlight_button.setOnClickListener ( new View.OnClickListener () {
+            @Override
+            public void onClick(View view) {
+                highlight = !highlight;
+                if(highlight)
+                    Toast.makeText ( getApplicationContext (), "Highlighting!",
+                        Toast.LENGTH_SHORT ).show ();
+                else
+                    Toast.makeText ( getApplicationContext (), "Not highlighting!",
+                            Toast.LENGTH_SHORT ).show ();
             }
         } );
         mOpenCvCameraView.setVisibility ( SurfaceView.VISIBLE );
@@ -244,22 +260,58 @@ public class MainActivity extends AppCompatActivity implements OnTouchListener, 
                 int h = (int) mBlobColorHsv.val[0];
                 int s = (int) mBlobColorHsv.val[1];
                 int v = (int) mBlobColorHsv.val[2];
-                Core.inRange ( inputHSV, new Scalar ( h-30, 70, 70 ),
-                        new Scalar ( h+50, 255, 255 ), inputHSV );
+                Core.inRange ( inputHSV, new Scalar ( h-20, s-10, v-10 ),
+                        new Scalar ( h+40, 255, 255 ), inputHSV );
                 boxColor = convertScalarHsv2Rgba ( new Scalar ( h,s,v ) );
                 break;
             default:
                 return mRgba;
         }
 
+        if(highlight){
+            //https://docs.opencv.org/3.2.0/d0/d86/tutorial_py_image_arithmetics.html
+            Mat mask = inputHSV;
+            Mat inv_mask = new Mat();
+            Core.bitwise_not (mask, inv_mask);
+            Mat mGray = new Mat();
+            Imgproc.cvtColor ( mRgba, mGray, Imgproc.COLOR_RGB2GRAY );
+            Imgproc.cvtColor ( mGray, mGray, Imgproc.COLOR_GRAY2RGBA);
+            Mat background = new Mat();
+            Mat foreground = new Mat();
+            Core.bitwise_and ( mGray, mGray, background, inv_mask );
+            Core.bitwise_and ( mRgba, mRgba, foreground, mask );
+            Core.add ( background, foreground, mRgba );
+
+            mask.release ();
+            inv_mask.release ();
+            mGray.release ();
+            background.release ();
+            foreground.release ();
+        }
+
+
+
+        /*
+        if (highlight){
+            for(int i = 0; i <inputHSV.rows (); i++)
+                for(int j = 0; j <inputHSV.cols(); j++){
+                    if(inputHSV.get (i, j )[0]==1){
+                        double[] value = mRgba.get (i,j);
+                        double average = (value[0] + value[1] + value[2])/3;
+                        value[0] =  average;
+                        value[1] =  average;
+                        value[2] =  average;
+                        mRgba.put(i ,j ,value);
+                    }
+                }
+        }
+        */
 
         //Opening and Closing Morphological operation
         Imgproc.erode ( inputHSV, inputHSV, struct_element );
         Imgproc.dilate ( inputHSV, inputHSV, struct_element );
         Imgproc.dilate ( inputHSV, inputHSV, struct_element );
         Imgproc.erode ( inputHSV, inputHSV, struct_element );
-
-        Core.bitwise_not ( inputHSV, inputHSV );
 
         //http://answers.opencv.org/question/96443/find-rectangle-from-image-in-android/
         int n = Imgproc.connectedComponentsWithStats ( inputHSV, labels, stats, centroids );
