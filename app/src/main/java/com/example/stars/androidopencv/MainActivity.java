@@ -258,7 +258,7 @@ import static org.opencv.features2d.Features2d.DRAW_RICH_KEYPOINTS;
 
         public Mat detectColor() {
 
-            Mat structelement = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(5, 5));
+            Mat struct_element = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(5, 5));
             Mat labels = new Mat(), stats = new Mat(), centroids = new Mat();
 
             Mat inputHSV = new Mat();
@@ -268,10 +268,10 @@ import static org.opencv.features2d.Features2d.DRAW_RICH_KEYPOINTS;
             Imgproc.cvtColor(mRgba, inputHSV, Imgproc.COLOR_RGB2HSV);
             switch(color) {
                 case 0:
-                    Core.inRange(inputHSV, new Scalar(0, 50, 70),
+                    Core.inRange(inputHSV, new Scalar(0, 20, 70),
                             new Scalar(40,  255, 255), mask1);
-                    Core.inRange(inputHSV, new Scalar(220, 50, 70),
-                            new Scalar(225,  255, 255), mask2);
+                    Core.inRange(inputHSV, new Scalar(220, 20, 70),
+                            new Scalar(255,  255, 255), mask2);
                     boxColor = RED;
                     Core.bitwise_or ( mask1, mask2, inputHSV );
                     break;
