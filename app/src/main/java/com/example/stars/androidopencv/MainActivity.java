@@ -292,10 +292,10 @@ import static org.opencv.features2d.Features2d.DRAW_RICH_KEYPOINTS;
 
 
             //Opening and Closing Morphological operation
-            Imgproc.erode(inputHSV, inputHSV, structelement);
-            Imgproc.dilate(inputHSV, inputHSV, structelement);
-            Imgproc.dilate(inputHSV, inputHSV, structelement);
-            Imgproc.erode(inputHSV, inputHSV, structelement);
+            Imgproc.erode(inputHSV, inputHSV, struct_element);
+            Imgproc.dilate(inputHSV, inputHSV, struct_element);
+            Imgproc.dilate(inputHSV, inputHSV, struct_element);
+            Imgproc.erode(inputHSV, inputHSV, struct_element);
 
             Core.bitwise_not(inputHSV, inputHSV);
 
@@ -303,6 +303,7 @@ import static org.opencv.features2d.Features2d.DRAW_RICH_KEYPOINTS;
             int n = Imgproc.connectedComponentsWithStats(inputHSV, labels, stats, centroids);
 
             Imgproc.cvtColor(inputHSV,inputHSV,Imgproc.COLOR_GRAY2RGB);
+
             for (int i = 0; i < n; i++){
                 double[] left = stats.get(i, Imgproc.CC_STAT_LEFT);
                 double[] top = stats.get(i, Imgproc.CC_STAT_TOP);
@@ -310,7 +311,7 @@ import static org.opencv.features2d.Features2d.DRAW_RICH_KEYPOINTS;
                 double[] height = stats.get(i, Imgproc.CC_STAT_HEIGHT);
                 double[] area = stats.get(i, Imgproc.CC_STAT_AREA);
                 //outer rect area = 414720
-                if(area[0] < 200000 && area[0] > 100)
+                if(area[0] < 200000 && area[0] > 200)
                     Imgproc.rectangle(mRgba, new Point(left[0],top[0]), new Point(left[0]+width[0], top[0]+height[0]), boxColor, 5);
             }
 
