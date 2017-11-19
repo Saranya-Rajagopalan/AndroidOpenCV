@@ -57,11 +57,6 @@ import static org.opencv.features2d.Features2d.DRAW_RICH_KEYPOINTS;
         TextView touch_coordinates;
         TextView touch_color;
         Button red_button, green_button, blue_button;
-        FeatureDetector detector;
-        DescriptorExtractor descriptor;
-        DescriptorMatcher matcher;
-        Mat descriptor1, descriptor2;
-        MatOfKeyPoint keypoints1, keypoints2;
         int color = -1;
         private CameraBridgeViewBase mOpenCvCameraView;
         private Mat mRgba, mRef;
@@ -218,37 +213,9 @@ import static org.opencv.features2d.Features2d.DRAW_RICH_KEYPOINTS;
         public void onCameraViewStarted(int width, int height) {
             mRgba = new Mat();
             mRef = new Mat();
-            descriptor1 = new Mat();
-            descriptor2 = new Mat();
-            keypoints1 = new MatOfKeyPoint();
-            keypoints2 = new MatOfKeyPoint();
             mBlobColorRgba = new Scalar(255);
             mBlobColorHsv = new Scalar(255);
             touched = false;
-            try {
-                init();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        public void init() throws IOException {
-
-            detector = FeatureDetector.create(FeatureDetector.ORB);
-            descriptor = DescriptorExtractor.create(DescriptorExtractor.ORB);
-            matcher = DescriptorMatcher.create(DescriptorMatcher.BRUTEFORCE_HAMMING);
-
-
-            AssetManager assetManager = getAssets();
-            InputStream input_stream;
-            input_stream = assetManager.open("image2.jpg");
-            Bitmap bit = BitmapFactory.decodeStream(input_stream);
-            Utils.bitmapToMat(bit, mRef);
-            Imgproc.cvtColor(mRef, mRef, Imgproc.COLOR_RGB2GRAY);
-            mRef.convertTo(mRef, 0);
-            detector.detect(mRef, keypoints1);
-            descriptor.compute(mRef, keypoints1, descriptor1);
-
         }
 
         @Override
