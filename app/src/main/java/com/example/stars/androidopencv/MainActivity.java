@@ -85,11 +85,7 @@ public class MainActivity extends AppCompatActivity implements OnTouchListener, 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate ( savedInstanceState );
         setContentView ( R.layout.activity_main );
-        //https://stackoverflow.com/questions/38552144/how-get-permission-for-camera-in-android-specifically-marshmallow
-        if (ContextCompat.checkSelfPermission ( getApplicationContext (), Manifest.permission.CAMERA )
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions ( this, new String[]{Manifest.permission.CAMERA}, REQUEST_CODE );
-        }
+
         getWindow ().addFlags ( WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON );
         mOpenCvCameraView = (CameraBridgeViewBase) findViewById ( R.id.opencv_tutorial_activity_surface_view );
         touch_coordinates = (TextView) findViewById ( R.id.touch_coordinates );
@@ -294,9 +290,9 @@ public class MainActivity extends AppCompatActivity implements OnTouchListener, 
             case 0:
                 Mat mask1 = new Mat ();
                 Mat mask2 = new Mat ();
-                Core.inRange ( inputHSV, new Scalar ( 0, 190, 190 ),
-                        new Scalar ( 15, 255, 255 ), mask1 );
-                Core.inRange ( inputHSV, new Scalar ( 160, 190, 190 ),
+                Core.inRange ( inputHSV, new Scalar ( 0, 150, 190 ),
+                        new Scalar ( 30, 255, 255 ), mask1 );
+                Core.inRange ( inputHSV, new Scalar ( 155, 150, 190 ),
                         new Scalar ( 180, 255, 255 ), mask2 );
                 boxColor = RED;
                 Core.bitwise_or ( mask1, mask2, inputHSV );
@@ -326,27 +322,37 @@ public class MainActivity extends AppCompatActivity implements OnTouchListener, 
                 inputHSV.copyTo ( mask );//mask obj in white
                 Mat inv_mask = new Mat ();
                 Core.bitwise_not ( mask, inv_mask );//obj in black
-                Mat original_background = new Mat ();
-                if (highlight_button.isChecked ()) {
-                    Imgproc.cvtColor ( mRgba, original_background, Imgproc.COLOR_RGB2GRAY );  //gray original image
-                    Imgproc.cvtColor ( original_background, original_background, Imgproc.COLOR_GRAY2RGBA );  //change depth to 4
-                } else {
-                    mRgba.copyTo ( original_background );
-                }
+                Mat original_gray = new Mat ();
                 Mat background = new Mat ();
                 Mat foreground = new Mat ();
 
-                Core.bitwise_and ( original_background, original_background, background, inv_mask );
-
                 //add_filter
-                if (highlight_mask != WHITE)
+                if (highlight_mask != WHITE){
+                    if (highlight_button.isChecked ()) {
+                        Imgproc.cvtColor ( mRgba, original_gray, Imgproc.COLOR_RGB2GRAY );  //gray original image
+                        Imgproc.cvtColor ( original_gray, original_gray, Imgproc.COLOR_GRAY2RGBA );  //change depth to 4
+                } else {
+                    mRgba.copyTo ( original_gray );  //okay not really gray
+                }
+                    original_gray.copyTo ( background );
                     mRgba.setTo ( highlight_mask, mask );
-                Core.bitwise_and ( mRgba, mRgba, foreground, mask );
-                Core.add ( background, foreground, mRgba );
-
+                    Core.bitwise_and ( mRgba, mRgba, foreground, mask );
+                    Core.addWeighted ( background, 0.85, foreground, 0.2,0, mRgba );
+                }
+                else {
+                    if (highlight_button.isChecked ()) {
+                        Imgproc.cvtColor ( mRgba, original_gray, Imgproc.COLOR_RGB2GRAY );  //gray original image
+                        Imgproc.cvtColor ( original_gray, original_gray, Imgproc.COLOR_GRAY2RGBA );  //change depth to 4
+                    } else {
+                        mRgba.copyTo ( original_gray );  //okay not really gray
+                    }
+                    Core.bitwise_and ( original_gray, original_gray, background, inv_mask );
+                    Core.bitwise_and ( mRgba, mRgba, foreground, mask );
+                    Core.add ( background, foreground, mRgba );
+                }
                 mask.release ();
                 inv_mask.release ();
-                original_background.release ();
+                original_gray.release ();
                 background.release ();
                 foreground.release ();
             }
