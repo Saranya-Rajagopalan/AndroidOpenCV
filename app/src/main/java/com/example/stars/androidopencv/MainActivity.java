@@ -310,7 +310,7 @@ public class MainActivity extends AppCompatActivity implements OnTouchListener, 
                 boxColor = GREEN;
                 break;
             case 2:
-                Core.inRange ( inputHSV, new Scalar ( 75, 158, 124 ),
+                Core.inRange ( inputHSV, new Scalar ( 80, 158, 124 ),
                         new Scalar ( 138, 255, 255 ), inputHSV );
                 boxColor = BLUE;
                 break;
