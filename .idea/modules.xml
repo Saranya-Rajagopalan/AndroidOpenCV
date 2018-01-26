@@ -3,10 +3,15 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/AndroidOpenCV.iml" filepath="$PROJECT_DIR$/AndroidOpenCV.iml" />
+      <module fileurl="file://B:\Codebase\AndroidOpenCV\AndroidOpenCV.iml" filepath="B:\Codebase\AndroidOpenCV\AndroidOpenCV.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://B:\Codebase\AndroidOpenCV\app\app.iml" filepath="B:\Codebase\AndroidOpenCV\app\app.iml" />
       <module fileurl="file://$PROJECT_DIR$/libraries/libraries.iml" filepath="$PROJECT_DIR$/libraries/libraries.iml" />
+      <module fileurl="file://B:\Codebase\AndroidOpenCV\libraries\libraries.iml" filepath="B:\Codebase\AndroidOpenCV\libraries\libraries.iml" />
       <module fileurl="file://$PROJECT_DIR$/openCVLibrary331/openCVLibrary331.iml" filepath="$PROJECT_DIR$/openCVLibrary331/openCVLibrary331.iml" />
+      <module fileurl="file://B:\Codebase\AndroidOpenCV\openCVLibrary331\openCVLibrary331.iml" filepath="B:\Codebase\AndroidOpenCV\openCVLibrary331\openCVLibrary331.iml" />
       <module fileurl="file://$PROJECT_DIR$/libraries/opencv/opencv.iml" filepath="$PROJECT_DIR$/libraries/opencv/opencv.iml" />
+      <module fileurl="file://B:\Codebase\AndroidOpenCV\libraries\opencv\opencv.iml" filepath="B:\Codebase\AndroidOpenCV\libraries\opencv\opencv.iml" />
     </modules>
   </component>
 </project>
