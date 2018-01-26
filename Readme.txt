@@ -1,5 +1,5 @@
 Readme.txt
-)bject detection based on color
+Object detection based on color
 ---------------------------------------------------------------------------------------------------
 Objectives:	To detect a specific colored object in the live camera feed.
 		Enclose the selected colored object with a rectangle and/or highlight it
